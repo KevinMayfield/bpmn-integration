@@ -67,6 +67,7 @@ function createCustomGroup(element, translate) {
     label: translate('Information Model'),
     entries: customProperties(element)
   };
+ // console.log(customGroup)
 
   return customGroup;
 }

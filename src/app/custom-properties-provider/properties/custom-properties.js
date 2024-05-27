@@ -5,19 +5,19 @@ export default function(element) {
 
   return [
     {
-      id: 'custom',
+      id: 'business',
       element,
       component: Custom,
       isEdited: isTextFieldEntryEdited
     },
     {
-      id: 'customprsb',
+      id: 'prsb',
       element,
       component: CustomPRSB,
       isEdited: isTextFieldEntryEdited
     },
     {
-      id: 'customopenehr',
+      id: 'openehr',
       element,
       component: CustomOpenEHR,
       isEdited: isTextFieldEntryEdited
@@ -33,12 +33,16 @@ function Custom(props) {
   const debounce = useService('debounceInput');
 
   const getValue = () => {
-    return element.businessObject.custom || '';
+    console.log(element)
+    console.log(element.businessObject)
+    console.log(element.businessObject.business)
+    console.log(element.businessObject.custom)
+    return element.businessObject.business || '';
   }
 
   const setValue = value => {
     return modeling.updateProperties(element, {
-      custom: value
+      business: value
     });
   }
 
@@ -65,12 +69,12 @@ function CustomPRSB(props) {
   const debounce = useService('debounceInput');
 
   const getValue = () => {
-    return element.businessObject.custom || '';
+    return element.businessObject.prsb || '';
   }
 
   const setValue = value => {
     return modeling.updateProperties(element, {
-      custom: value
+      prsb: value
     });
   }
 
@@ -97,12 +101,14 @@ function CustomOpenEHR(props) {
   const debounce = useService('debounceInput');
 
   const getValue = () => {
-    return element.businessObject.custom || '';
+    console.log(element.businessObject)
+    return element.businessObject.openehr || '';
   }
 
   const setValue = value => {
+
     return modeling.updateProperties(element, {
-      custom: value
+      openehr: value
     });
   }
 

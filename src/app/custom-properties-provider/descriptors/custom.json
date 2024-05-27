@@ -1,6 +1,6 @@
 {
   "name": "Information Model",
-  "prefix": "information",
+  "prefix": "infoModel",
   "uri": "http://custom",
   "xml": {
     "tagAlias": "lowerCase"
@@ -12,15 +12,20 @@
       "extends": [
         "bpmn:Task"
       ],
-      "properties": [
+      "properties": [{
+        "name": "business",
+        "isAttr": true,
+        "type": "String",
+        "description": "A test"
+      },
         {
-          "name": "PRSB Standard",
+          "name": "prsb",
           "isAttr": true,
           "type": "String",
           "description": "A test"
         },
         {
-          "name": "openEHR Template",
+          "name": "openehr",
           "isAttr": true,
           "type": "String",
           "description": "A test"
