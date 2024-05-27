@@ -39,7 +39,7 @@ function CustomPropertiesProvider(propertiesPanel, translate) {
     return function(groups) {
 
       // Add the "magic" group
-      if(is(element, 'bpmn:StartEvent')) {
+      if(is(element, 'bpmn:Task')) {
         groups.push(createCustomGroup(element, translate));
       }
 
@@ -64,7 +64,7 @@ function createCustomGroup(element, translate) {
   // create a group called "Custom properties".
   const customGroup = {
     id: 'custom',
-    label: translate('Custom properties'),
+    label: translate('Information Model'),
     entries: customProperties(element)
   };
 

@@ -1,6 +1,6 @@
 {
-  "name": "Custom",
-  "prefix": "custom",
+  "name": "Information Model",
+  "prefix": "information",
   "uri": "http://custom",
   "xml": {
     "tagAlias": "lowerCase"
@@ -8,15 +8,22 @@
   "associations": [],
   "types": [
     {
-      "name": "CustomStartEvent",
+      "name": "CustomTask",
       "extends": [
-        "bpmn:StartEvent"
+        "bpmn:Task"
       ],
       "properties": [
         {
-          "name": "custom",
+          "name": "PRSB Standard",
           "isAttr": true,
-          "type": "String"
+          "type": "String",
+          "description": "A test"
+        },
+        {
+          "name": "openEHR Template",
+          "isAttr": true,
+          "type": "String",
+          "description": "A test"
         }
       ]
     }
