@@ -1,8 +1,9 @@
-import {AfterContentInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
+import {AfterContentInit, Component, ElementRef, EventEmitter, OnDestroy, ViewChild} from '@angular/core';
 import {BpmnPropertiesPanelModule, BpmnPropertiesProviderModule,} from 'bpmn-js-properties-panel';
 import Modeler from 'bpmn-js/lib/Modeler';
 import customPropertiesProvider from '../custom-properties-provider/custom-property-provider';
 import {from, Observable} from 'rxjs';
+import {saveAs} from "file-saver";
 
 const custom = require('../custom-properties-provider/descriptors/custom.json');
 
@@ -44,6 +45,10 @@ export class DiagramComponent implements AfterContentInit, OnDestroy {
       </bpmndi:BPMNPlane>
     </bpmndi:BPMNDiagram>
   </bpmn2:definitions>`;
+
+  private fileName: string | undefined;
+
+  fileLoadedFile: EventEmitter<any> = new EventEmitter();
 
   constructor() {
     this.bpmnJS = new Modeler({
@@ -88,7 +93,23 @@ export class DiagramComponent implements AfterContentInit, OnDestroy {
   }
 
   save() {
+    this.bpmnJS?.saveXML().then((result) => {
 
+      const str = result.xml
+      if (str !== undefined) {
+
+
+        const blob = new Blob([str], {type: 'text/xml'});
+
+        saveAs(blob, 'model.bpmn');
+
+
+      }
+
+    }).catch(function(err) {
+
+      console.log(err);
+    });
   }
 
   new() {
@@ -97,5 +118,40 @@ export class DiagramComponent implements AfterContentInit, OnDestroy {
 
   convert() {
 
+  }
+
+  onFileSelected(event: any) {
+    console.log(event)
+    const file:File = event.target.files[0];
+
+    if (file) {
+
+      if (file instanceof File) {
+        this.fileName = file.name
+        const reader = new FileReader();
+        reader.readAsBinaryString(file);
+        this.fileLoadedFile.subscribe((data: any) => {
+            this.importDiagram(data)
+          }
+        );
+        const me = this;
+        reader.onload = (event: Event) => {
+          if (reader.result instanceof ArrayBuffer) {
+            ///console.log('array buffer');
+
+            // @ts-ignore
+            me.fileLoaded.emit(String.fromCharCode.apply(null, reader.result));
+          } else {
+            // console.log('not a buffer');
+            if (reader.result !== null) me.fileLoadedFile.emit(reader.result);
+          }
+        };
+        reader.onerror = function (error) {
+          console.log('Error: ', error);
+       //   me.openAlert('Alert','Failed to process file. Try smaller example?')
+        };
+      }
+
+    }
   }
 }
