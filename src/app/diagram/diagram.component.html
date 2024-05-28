@@ -1,7 +1,7 @@
 <div layout="row" layout-align="space-between left">
 
   <button color = "primary" mat-button (click)="new()" >New</button>&nbsp;
-  <input type="file" class="file-upload" (change)="onFileSelected($event)">
+  <input (change)="onFileSelected($event)" [(ngModel)]="fileName" class="file-upload" type="file">
 
   <button color = "primary" mat-button (click)="save()" >Save</button>&nbsp;
   <!-- <button color = "primary" disabled mat-button (click)="convert()" >Convert</button>&nbsp; -->

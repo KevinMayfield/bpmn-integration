@@ -46,7 +46,7 @@ export class DiagramComponent implements AfterContentInit, OnDestroy {
     </bpmndi:BPMNDiagram>
   </bpmn2:definitions>`;
 
-  private fileName: string | undefined;
+  fileName: string | undefined;
 
   fileLoadedFile: EventEmitter<any> = new EventEmitter();
 
@@ -113,7 +113,8 @@ export class DiagramComponent implements AfterContentInit, OnDestroy {
   }
 
   new() {
-
+    this.importDiagram(this.xml)
+    this.fileName = undefined
   }
 
   convert() {
