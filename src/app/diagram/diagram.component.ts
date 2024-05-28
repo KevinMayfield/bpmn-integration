@@ -46,7 +46,7 @@ export class DiagramComponent implements AfterContentInit, OnDestroy {
     </bpmndi:BPMNDiagram>
   </bpmn2:definitions>`;
 
-  fileName: string | undefined;
+  fileName: any = '';
 
   fileLoadedFile: EventEmitter<any> = new EventEmitter();
 
@@ -98,10 +98,14 @@ export class DiagramComponent implements AfterContentInit, OnDestroy {
       const str = result.xml
       if (str !== undefined) {
 
+        // Save in pretty format
 
-        const blob = new Blob([str], {type: 'text/xml'});
-
-        saveAs(blob, 'model.bpmn');
+        const blob = new Blob([this.prettifyXml(str)], {type: 'text/xml'});
+        var fileName = 'model.bpmn'
+        if (this.fileName !== undefined) {
+          fileName = this.fileName.split(/(\\|\/)/g).pop()
+        }
+        saveAs(blob, fileName);
 
 
       }
@@ -114,7 +118,8 @@ export class DiagramComponent implements AfterContentInit, OnDestroy {
 
   new() {
     this.importDiagram(this.xml)
-    this.fileName = undefined
+    console.log(this.fileName)
+    this.fileName = ''
   }
 
   convert() {
@@ -122,13 +127,13 @@ export class DiagramComponent implements AfterContentInit, OnDestroy {
   }
 
   onFileSelected(event: any) {
-    console.log(event)
+
     const file:File = event.target.files[0];
 
     if (file) {
 
       if (file instanceof File) {
-        this.fileName = file.name
+
         const reader = new FileReader();
         reader.readAsBinaryString(file);
         this.fileLoadedFile.subscribe((data: any) => {
@@ -155,4 +160,28 @@ export class DiagramComponent implements AfterContentInit, OnDestroy {
 
     }
   }
+
+  prettifyXml(sourceXml)
+  {
+    var xmlDoc = new DOMParser().parseFromString(sourceXml, 'application/xml');
+    var xsltDoc = new DOMParser().parseFromString([
+      // describes how we want to modify the XML - indent everything
+      '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform">',
+      '  <xsl:strip-space elements="*"/>',
+      '  <xsl:template match="para[content-style][not(text())]">', // change to just text() to strip space in text nodes
+      '    <xsl:value-of select="normalize-space(.)"/>',
+      '  </xsl:template>',
+      '  <xsl:template match="node()|@*">',
+      '    <xsl:copy><xsl:apply-templates select="node()|@*"/></xsl:copy>',
+      '  </xsl:template>',
+      '  <xsl:output indent="yes"/>',
+      '</xsl:stylesheet>',
+    ].join('\n'), 'application/xml');
+
+    var xsltProcessor = new XSLTProcessor();
+    xsltProcessor.importStylesheet(xsltDoc);
+    var resultDoc = xsltProcessor.transformToDocument(xmlDoc);
+    var resultXml = new XMLSerializer().serializeToString(resultDoc);
+    return resultXml;
+  };
 }

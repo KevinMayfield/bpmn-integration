@@ -33,10 +33,7 @@ function Custom(props) {
   const debounce = useService('debounceInput');
 
   const getValue = () => {
-    console.log(element)
-    console.log(element.businessObject)
-    console.log(element.businessObject.business)
-    console.log(element.businessObject.custom)
+
     return element.businessObject.business || '';
   }
 
@@ -101,7 +98,7 @@ function CustomOpenEHR(props) {
   const debounce = useService('debounceInput');
 
   const getValue = () => {
-    console.log(element.businessObject)
+
     return element.businessObject.openehr || '';
   }
 
