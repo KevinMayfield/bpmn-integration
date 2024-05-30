@@ -1,9 +1,11 @@
-import {AfterContentInit, Component, ElementRef, EventEmitter, OnDestroy, ViewChild} from '@angular/core';
+import {AfterContentInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {BpmnPropertiesPanelModule, BpmnPropertiesProviderModule,} from 'bpmn-js-properties-panel';
 import Modeler from 'bpmn-js/lib/Modeler';
 import customPropertiesProvider from '../custom-properties-provider/custom-property-provider';
 import {from, Observable} from 'rxjs';
 import {saveAs} from "file-saver";
+import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 const custom = require('../custom-properties-provider/descriptors/custom.json');
 
@@ -23,7 +25,7 @@ const BpmnJS = require('bpmn-js/dist/bpmn-modeler.production.min.js');
    'diagram.component.css'
   ]
 })
-export class DiagramComponent implements AfterContentInit, OnDestroy {
+export class DiagramComponent implements AfterContentInit, OnDestroy, OnInit {
 
   // instantiate BpmnJS with component
   private bpmnJS: Modeler;
@@ -50,7 +52,8 @@ export class DiagramComponent implements AfterContentInit, OnDestroy {
 
   fileLoadedFile: EventEmitter<any> = new EventEmitter();
 
-  constructor() {
+  constructor(              private http: HttpClient,
+                            private route: ActivatedRoute) {
     this.bpmnJS = new Modeler({
       container: this.diagramRef?.nativeElement,
       propertiesPanel: {
@@ -184,4 +187,25 @@ export class DiagramComponent implements AfterContentInit, OnDestroy {
     var resultXml = new XMLSerializer().serializeToString(resultDoc);
     return resultXml;
   };
+
+  ngOnInit(): void {
+    this.route.queryParamMap.subscribe(params => {
+      //  console.log('params')
+      const urlParam = params.get('file');
+      const patientId = params.get('id');
+
+      console.log(decodeURI(urlParam as string))
+
+      if (urlParam !== undefined && urlParam !== null) {
+
+          this.http.get('https://raw.githubusercontent.com/KevinMayfield/process-models/main/' + decodeURI(urlParam as string),
+            { responseType: 'text' }).subscribe((result) => {
+              console.log(result)
+            this.importDiagram(result)
+            }
+          )
+      }
+    })
+
+  }
 }
